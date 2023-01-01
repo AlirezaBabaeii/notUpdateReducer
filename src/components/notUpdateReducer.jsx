@@ -1,8 +1,8 @@
-import React, { useState, useReducer, useContext, createContext } from "react";
+import React, { useState, useReducer, useContext , useCallback } from "react";
 import { SelectItemAndChilds, FunctionFinderContext } from "./context";
 import Item from "./Item";
 import Tabel from "./tabel";
-const Data = [
+const Data1 = [
   {
     name: "a name",
     id: "id1",
@@ -30,6 +30,62 @@ const Data = [
   },
 ];
 
+const Data2 = [
+  {
+    name: "a name",
+    id: "fdsif",
+    childeren: [
+      { name: "aa name", id: "dfgfdgc", childeren: [] },
+      { name: "aaa name", id: "tr643", childeren: [] },
+    ],
+  },
+  {
+    name: "b name",
+    id: "hjkjvn",
+    childeren: [
+      { name: "bb name", id: "37hsdgf", childeren: [] },
+      { name: "bbb name", id: "bssod", childeren: [] },
+    ],
+  },
+  {
+    name: "c name",
+    id: "548hdmns",
+    childeren: [
+      { name: "cc name", id: "rjknjc", childeren: [] },
+      { name: "ccc name", id: "gflmnc", childeren: [] },
+      { name: "cccc name", id: "c788r", childeren: [] },
+    ],
+  },
+];
+
+const Data3 = [
+  {
+    name: "a name",
+    id: "dccc",
+    childeren: [
+      { name: "aa name", id: "ciu", childeren: [] },
+      { name: "aaa name", id: "cuyrbr", childeren: [] },
+    ],
+  },
+  {
+    name: "b name",
+    id: "c3c",
+    childeren: [
+      { name: "bb name", id: "vvdfd", childeren: [] },
+      { name: "bbb name", id: "linsdbv", childeren: [] },
+    ],
+  },
+  {
+    name: "c name",
+    id: "v5v",
+    childeren: [
+      { name: "cc name", id: "vtry", childeren: [] },
+      { name: "ccc name", id: "hjv", childeren: [] },
+      { name: "cccc name", id: "vrax2", childeren: [] },
+    ],
+  },
+];
+
 const SetTabelDataReducer = (state, acction) => {
   switch (acction.type) {
     case "SetTabelData":
@@ -41,9 +97,9 @@ const SetTabelDataReducer = (state, acction) => {
 
 const RefactorContext = () => {
   const [ItemsAccardon, setItemsAccardon] = useState([
-    { title: "1 title", data: Data },
-    { title: "2 title", data: Data },
-    { title: "3 title", data: Data },
+    { title: "1 title", data: Data1 },
+    { title: "2 title", data: Data2 },
+    { title: "3 title", data: Data3 },
   ]);
 
   const [Tabeldata, dispatchTabeldata] = useReducer(SetTabelDataReducer, []);
@@ -101,25 +157,42 @@ function Additem(data, id) {
   return data.map(map);
 }
 
-const Reducer = (state, action) => {
-  switch (action.type) {
-    case "Addchilds":
-      const AddItemResult = Additem(state, action.payload);
-      return AddItemResult;
-    default:
-      return state;
-  }
-};
 
 function Accardon({ item, title }) {
   const [Tabeldata, dispatchTabeldata] = useContext(SelectItemAndChilds);
-  const [stateDataitem, dispatchDataitem] = useReducer(Reducer, item);
- 
+    const UpdateTabelonAddChilds =  useCallback((state , id) => {
+      
+       const ResultFinders =  Finder(state , id)
+    //  console.log(ResultFinders , 'Called Resukt finder');
+      // console.log(id , 'callback');
+      
+      
+    },
+    [],
+    )
+    
+    
+    const Reducer = (state, action) => {
+      switch (action.type) {
+        case "Addchilds":
+          const AddItemResult = Additem(state, action.payload);
+          if(AddItemResult){
+            UpdateTabelonAddChilds(AddItemResult,action.payload)
+          }
+          return AddItemResult;
+          default:
+            return state;
+          }
+        };
+        
+        const [stateDataitem, dispatchDataitem] = useReducer(Reducer, item);
   const FindDataWhitid = (data) => {
     dispatchTabeldata({ type: "SetTabelData", payload: data });
   };
 
 
+
+  var ResultFinder
 
   function Finder(data, id) { 
     let FindItemd = false;
@@ -129,27 +202,25 @@ function Accardon({ item, title }) {
 
       if (item.id === id) {
         FindItemd = true;
-        return item
+       ResultFinder = item
+      dispatchTabeldata({ type: "SetTabelData", payload: ResultFinder });
+       console.log(ResultFinder);
+        // return item
       }
 
-      if (item.children)
+      if (item.childeren)
         return {
           ...item,
-          children: item.children?.map(map),
+          childeren: item.childeren?.map(map),
         };
     };
 
     return data.map(map);
   }
 
-  const UpdateTabelonAddChilds = (id)=>{
-   const ResultFinders =  Finder(stateDataitem , id)
-  console.log(ResultFinders , 'this result');
-  }
-
   const AddItemsChilds = (id) => {
     dispatchDataitem({ type: "Addchilds", payload: id });
-    UpdateTabelonAddChilds(id)
+    // UpdateTabelonAddChilds(id)
   };
   return (
     <div
