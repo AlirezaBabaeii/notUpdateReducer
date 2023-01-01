@@ -13,6 +13,7 @@ export default function Tabel() {
 
   return (
     <div style={{width:'100%' , display:'flex' , alignItems:'center' , flexDirection:'column'}}>
+   <h3>Tabel</h3>
       <h2>this item name : {Tabeldata.name}</h2>
       <div>
         {Tabeldata?.childeren?.map((value,index)=>{

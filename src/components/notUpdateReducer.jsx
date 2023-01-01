@@ -101,10 +101,10 @@ function Additem(data, id) {
   return data.map(map);
 }
 
-const Reducer = (state, accardon) => {
-  switch (accardon.type) {
+const Reducer = (state, action) => {
+  switch (action.type) {
     case "Addchilds":
-      const AddItemResult = Additem(state, accardon.payload);
+      const AddItemResult = Additem(state, action.payload);
       return AddItemResult;
     default:
       return state;
@@ -119,9 +119,37 @@ function Accardon({ item, title }) {
     dispatchTabeldata({ type: "SetTabelData", payload: data });
   };
 
+
+
+  function Finder(data, id) { 
+    let FindItemd = false;
+
+    const map = (item) => {
+      if (FindItemd) return item;
+
+      if (item.id === id) {
+        FindItemd = true;
+        return item
+      }
+
+      if (item.children)
+        return {
+          ...item,
+          children: item.children?.map(map),
+        };
+    };
+
+    return data.map(map);
+  }
+
+  const UpdateTabelonAddChilds = (id)=>{
+   const ResultFinders =  Finder(stateDataitem , id)
+  console.log(ResultFinders , 'this result');
+  }
+
   const AddItemsChilds = (id) => {
     dispatchDataitem({ type: "Addchilds", payload: id });
-    FindDataWhitid(stateDataitem)
+    UpdateTabelonAddChilds(id)
   };
   return (
     <div
