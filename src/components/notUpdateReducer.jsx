@@ -101,8 +101,8 @@ function Additem(data, id) {
   return data.map(map);
 }
 
-const Reducer = (state, accardon) => {
-  switch (accardon.type) {
+const Reducer = (state, action) => {
+  switch (action.type) {
     case "Addchilds":
       const AddItemResult = Additem(state, accardon.payload);
       return AddItemResult;
